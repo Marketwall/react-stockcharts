@@ -100,6 +100,7 @@ class EventCapture extends Component {
 			select(win)
 				.on(MOUSEMOVE, null);
 		}
+		if (this.props.focus === false)  this.focus = false;
 		onMouseLeave(e);
 	}
 	handleWheel(e) {
@@ -109,13 +110,17 @@ class EventCapture extends Component {
 		const yZoom = Math.abs(e.deltaY) > Math.abs(e.deltaX) && Math.abs(e.deltaY) > 0;
 		// const xPan = Math.abs(e.deltaY) < Math.abs(e.deltaX) && Math.abs(e.deltaX) > 0;
 		const mouseXY = mousePosition(e);
-		e.preventDefault();
+
 
 		if (zoom && this.focus && yZoom && !panInProgress) {
+			e.preventDefault();
+
 			const zoomDir = e.deltaY > 0 ? 1 : -1;
 
 			onZoom(zoomDir, mouseXY, e);
 		} else if (this.focus) {
+			e.preventDefault();
+
 			if (this.shouldPan()) {
 				// console.log("Do pan now...")
 				// pan already in progress
