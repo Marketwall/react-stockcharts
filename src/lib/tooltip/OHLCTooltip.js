@@ -91,6 +91,8 @@ OHLCTooltip.propTypes = {
 	textFill: PropTypes.string,
 	labelFill: PropTypes.string,
 	displayTexts: PropTypes.object,
+	showDate: PropTypes.bool,
+	showVolume: PropTypes.bool
 };
 
 const displayTextsDefault = {
@@ -122,11 +124,12 @@ OHLCTooltip.defaultProps = {
 	origin: [0, 0],
 	children: defaultDisplay,
 	displayTexts: displayTextsDefault,
+	showDate: true,
+	showVolume: true
 };
 
 function defaultDisplay(props, moreProps, itemsToDisplay) {
 
-	/* eslint-disable */
 	const {
 		className,
 		textFill,
@@ -134,9 +137,10 @@ function defaultDisplay(props, moreProps, itemsToDisplay) {
 		onClick,
 		fontFamily,
 		fontSize,
-		displayTexts
+		displayTexts,
+		showDate,
+		showVolume,
 	} = props;
-	/* eslint-enable */
 
 	const {
 		displayDate,
@@ -160,12 +164,14 @@ function defaultDisplay(props, moreProps, itemsToDisplay) {
 				fontFamily={fontFamily}
 				fontSize={fontSize}
 			>
-				<ToolTipTSpanLabel
-					fill={labelFill}
-					key="label"
-					x={0}
-					dy="5">{displayTexts.d}</ToolTipTSpanLabel>
-				<tspan key="value" fill={textFill}>{displayDate}</tspan>
+				{(showDate) ? [
+					<ToolTipTSpanLabel
+						fill={labelFill}
+						key="label"
+						x={0}
+						dy="5">{displayTexts.d}</ToolTipTSpanLabel>,
+					<tspan key="value" fill={textFill}>{displayDate}</tspan>
+				] : null}
 				<ToolTipTSpanLabel fill={labelFill} key="label_O">{displayTexts.o}</ToolTipTSpanLabel>
 				<tspan key="value_O" fill={textFill}>{open}</tspan>
 				<ToolTipTSpanLabel fill={labelFill} key="label_H">{displayTexts.h}</ToolTipTSpanLabel>
@@ -174,8 +180,9 @@ function defaultDisplay(props, moreProps, itemsToDisplay) {
 				<tspan key="value_L" fill={textFill}>{low}</tspan>
 				<ToolTipTSpanLabel fill={labelFill} key="label_C">{displayTexts.c}</ToolTipTSpanLabel>
 				<tspan key="value_C" fill={textFill}>{close}</tspan>
-				<ToolTipTSpanLabel fill={labelFill} key="label_Vol">{displayTexts.v}</ToolTipTSpanLabel>
-				<tspan key="value_Vol" fill={textFill}>{volume}</tspan>
+				{(showVolume) ? [
+					<ToolTipTSpanLabel fill={labelFill} key="label_Vol">{displayTexts.v}</ToolTipTSpanLabel>,
+					<tspan key="value_Vol" fill={textFill}>{volume}</tspan>] : null}
 			</ToolTipText>
 		</g>
 	);
