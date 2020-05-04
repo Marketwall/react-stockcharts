@@ -170,8 +170,12 @@ function defaultDisplay(props, moreProps, itemsToDisplay) {
 						key="label"
 						x={0}
 						dy="5">{displayTexts.d}</ToolTipTSpanLabel>,
-					<tspan key="value" fill={textFill}>{displayDate}</tspan>
-				] : null}
+					<tspan key="value" fill={textFill}>{displayDate}</tspan>,
+
+					<ToolTipTSpanLabel fill={labelFill} key="label_O">{displayTexts.o}</ToolTipTSpanLabel>
+				] : <ToolTipTSpanLabel x={0}
+					dy="5" fill={labelFill} key="label_O">{displayTexts.o}</ToolTipTSpanLabel>
+				}
 				<ToolTipTSpanLabel fill={labelFill} key="label_O">{displayTexts.o}</ToolTipTSpanLabel>
 				<tspan key="value_O" fill={textFill}>{open}</tspan>
 				<ToolTipTSpanLabel fill={labelFill} key="label_H">{displayTexts.h}</ToolTipTSpanLabel>
