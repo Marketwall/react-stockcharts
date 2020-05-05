@@ -176,7 +176,6 @@ function defaultDisplay(props, moreProps, itemsToDisplay) {
 				] : <ToolTipTSpanLabel x={0}
 					dy="5" fill={labelFill} key="label_O">{displayTexts.o}</ToolTipTSpanLabel>
 				}
-				<ToolTipTSpanLabel fill={labelFill} key="label_O">{displayTexts.o}</ToolTipTSpanLabel>
 				<tspan key="value_O" fill={textFill}>{open}</tspan>
 				<ToolTipTSpanLabel fill={labelFill} key="label_H">{displayTexts.h}</ToolTipTSpanLabel>
 				<tspan key="value_H" fill={textFill}>{high}</tspan>
