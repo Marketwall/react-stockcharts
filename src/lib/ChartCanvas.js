@@ -128,7 +128,7 @@ function calculateFullData(props) {
 		filterData
 	};
 }
-function resetChart(props, firstCalculation = false) {
+function resetChart(props, firstCalculation = false, yScaleZoomed) {
 	if (process.env.NODE_ENV !== "production") {
 		if (!firstCalculation) log("CHART RESET");
 	}
@@ -144,7 +144,8 @@ function resetChart(props, firstCalculation = false) {
 	const chartConfig = getChartConfigWithUpdatedYScales(
 		getNewChartConfig(dimensions, children),
 		{ plotData, xAccessor, displayXAccessor, fullData },
-		xScale.domain()
+		xScale.domain(),
+		yScaleZoomed
 	);
 
 	return {
@@ -158,6 +159,7 @@ function resetChart(props, firstCalculation = false) {
 function updateChart(
 	newState,
 	initialXScale,
+	yScaleZoomed,
 	props,
 	lastItemWasVisible,
 	initialChartConfig,
@@ -219,7 +221,8 @@ function updateChart(
 	const chartConfig = getChartConfigWithUpdatedYScales(
 		getNewChartConfig(dimensions, children, initialChartConfig),
 		{ plotData, xAccessor, displayXAccessor, fullData },
-		updatedXScale.domain()
+		updatedXScale.domain(),
+		yScaleZoomed
 	);
 
 	return {
@@ -463,7 +466,7 @@ class ChartCanvas extends Component {
 			chartConfig: initialChartConfig,
 			plotData: initialPlotData
 		} = this.state;
-		const { filterData } = this.state;
+		const { filterData, yScaleZoomed } = this.state;
 		const { fullData } = this;
 		const { postCalculator } = this.props;
 
@@ -483,7 +486,8 @@ class ChartCanvas extends Component {
 		const chartConfig = getChartConfigWithUpdatedYScales(
 			initialChartConfig,
 			{ plotData, xAccessor, displayXAccessor, fullData },
-			updatedScale.domain()
+			updatedScale.domain(),
+			yScaleZoomed
 		);
 
 		return {
@@ -703,10 +707,17 @@ class ChartCanvas extends Component {
 	yAxisZoom(chartId, newDomain) {
 		this.clearThreeCanvas();
 		const { chartConfig: initialChartConfig } = this.state;
+		const { isYScalePreservedOnYZoom } = this.props;
+
+		let yScaleZoomed = null;
+
 		const chartConfig = initialChartConfig
 			.map(each => {
 				if (each.id === chartId) {
 					const { yScale } = each;
+					if ( isYScalePreservedOnYZoom && !yScaleZoomed ) {
+						yScaleZoomed = yScale.copy().domain(newDomain);
+					}
 					return {
 						...each,
 						yScale: yScale.copy().domain(newDomain),
@@ -719,6 +730,7 @@ class ChartCanvas extends Component {
 
 		this.setState({
 			chartConfig,
+			yScaleZoomed
 		});
 	}
 	triggerEvent(type, props, e) {
@@ -745,7 +757,7 @@ class ChartCanvas extends Component {
 	}
 	panHelper(mouseXY, initialXScale, { dx, dy }, chartsToPan) {
 		const { xAccessor, displayXAccessor, chartConfig: initialChartConfig } = this.state;
-		const { filterData } = this.state;
+		const { filterData, yScaleZoomed } = this.state;
 		const { fullData } = this;
 		const { postCalculator } = this.props;
 
@@ -776,6 +788,7 @@ class ChartCanvas extends Component {
 			initialChartConfig,
 			{ plotData, xAccessor, displayXAccessor, fullData },
 			updatedScale.domain(),
+			yScaleZoomed,
 			dy,
 			chartsToPan
 		);
@@ -1004,7 +1017,7 @@ class ChartCanvas extends Component {
 					log("xExtents changed");
 			}
 			// do reset
-			newState = resetChart(nextProps);
+			newState = resetChart(nextProps, false, this.state.yScaleZoomed);
 			this.mutableState = {};
 		} else {
 
@@ -1025,6 +1038,7 @@ class ChartCanvas extends Component {
 			newState = updateChart(
 				calculatedState,
 				this.state.xScale,
+				this.state.yScaleZoomed,
 				nextProps,
 				lastItemWasVisible,
 				initialChartConfig,
@@ -1082,7 +1096,8 @@ class ChartCanvas extends Component {
 		if (changed) {
 			this.clearThreeCanvas();
 			this.setState({
-				chartConfig: newChartConfig
+				chartConfig: newChartConfig,
+				yScaleZoomed: undefined
 			});
 		}
 	}
@@ -1223,6 +1238,7 @@ ChartCanvas.propTypes = {
 	onSelect: PropTypes.func,
 	maintainPointsPerPixelOnResize: PropTypes.bool,
 	disableInteraction: PropTypes.bool,
+	isYScalePreservedOnYZoom: PropTypes.bool,
 };
 
 ChartCanvas.defaultProps = {
@@ -1250,6 +1266,7 @@ ChartCanvas.defaultProps = {
 	maintainPointsPerPixelOnResize: true,
 	// ratio: 2,
 	disableInteraction: false,
+	isYScalePreservedOnYZoom: false
 };
 
 ChartCanvas.childContextTypes = {

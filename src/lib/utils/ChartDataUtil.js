@@ -176,17 +176,24 @@ export function getChartConfigWithUpdatedYScales(
 	chartConfig,
 	{ plotData, xAccessor, displayXAccessor, fullData },
 	xDomain,
+	yScaleZoomed,
 	dy,
 	chartsToPan
 ) {
 	const yDomains = chartConfig
 		.map(({ yExtentsCalculator, yExtents, yScale }) => {
 
-			const realYDomain = isDefined(yExtentsCalculator)
+			let realYDomain = isDefined(yExtentsCalculator)
 				? yExtentsCalculator({ plotData, xDomain, xAccessor, displayXAccessor, fullData })
 				: yDomainFromYExtents(yExtents, yScale, plotData);
 
+			if ( yScaleZoomed ) {
+			    yScale = yScaleZoomed;
+				realYDomain = yScaleZoomed.domain();
+			}
+
 			// console.log("yScale.domain() ->", yScale.domain())
+
 
 			const yDomainDY = isDefined(dy)
 				? yScale.range().map(each => each - dy).map(yScale.invert)
