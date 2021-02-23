@@ -340,6 +340,7 @@ class ChartCanvas extends Component {
 		this.xAxisZoom = this.xAxisZoom.bind(this);
 		this.yAxisZoom = this.yAxisZoom.bind(this);
 		this.resetYDomain = this.resetYDomain.bind(this);
+		this.resetChartScale = this.resetChartScale.bind(this);
 		this.calculateStateForDomain = this.calculateStateForDomain.bind(this);
 		this.generateSubscriptionId = this.generateSubscriptionId.bind(this);
 		this.draw = this.draw.bind(this);
@@ -1070,6 +1071,53 @@ class ChartCanvas extends Component {
 			this.setState(state);
 		}
 		this.fullData = fullData;
+	}
+
+	resetChartScale() {
+		// const { chartConfig: initialChartConfig } = this.state;
+
+		// let newState;
+		// if (process.env.NODE_ENV !== "production") {
+		// 	if (!interaction)
+		// 		log("RESET CHART, changes to a non interactive chart");
+		// 	else if (reset)
+		// 		log("RESET CHART, one or more of these props changed", CANDIDATES_FOR_RESET);
+		// 	else
+		// 		log("xExtents changed");
+		// }
+		// do reset
+		const newState = resetChart(this.props, false, null);
+		this.mutableState = {};
+
+		const { fullData, ...state } = newState;
+
+		if (this.panInProgress) {
+			if (process.env.NODE_ENV !== "production") {
+				log("Pan is in progress");
+			}
+		} else {
+			/*
+            if (!reset) {
+                state.chartConfig
+                    .forEach((each) => {
+                        // const sourceChartConfig = initialChartConfig.filter(d => d.id === each.id);
+                        const prevChartConfig = find(initialChartConfig, d => d.id === each.id);
+                        if (isDefined(prevChartConfig) && prevChartConfig.yPanEnabled) {
+                            each.yScale.domain(prevChartConfig.yScale.domain());
+                            each.yPanEnabled = prevChartConfig.yPanEnabled;
+                        }
+                    });
+            }
+            */
+			this.clearThreeCanvas();
+
+			this.setState({
+				...state,
+				yScaleZoomed: undefined
+			});
+		}
+		this.fullData = fullData;
+
 	}
 	/*
 	componentDidUpdate(prevProps, prevState) {
