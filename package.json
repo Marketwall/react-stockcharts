@@ -1,6 +1,6 @@
 {
   "name": "@marketwall/react-stockcharts",
-  "version": "0.7.9-SNAPSHOT.6",
+  "version": "0.7.9-SNAPSHOT.7",
   "description": "Highly customizable stock charts with ReactJS and d3",
   "main": "src/index.js",
   "module": "build/index.js",
