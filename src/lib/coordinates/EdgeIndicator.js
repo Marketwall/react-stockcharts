@@ -53,7 +53,7 @@ EdgeIndicator.propTypes = {
 		PropTypes.string,
 		PropTypes.func,
 	]),
-	lineStroke: PropTypes.oneOfType([
+        lineStroke: PropTypes.oneOfType([
 		PropTypes.string,
 		PropTypes.func,
 	]),

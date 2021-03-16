@@ -1,7 +1,7 @@
 
 
 import React from "react";
-import { extent } from "d3-array";
+import { extent, mean } from "d3-array";
 import { set } from "d3-collection";
 import flattenDeep from "lodash.flattendeep";
 
@@ -17,8 +17,9 @@ import {
 	functor,
 	mapObject,
 	find,
-	shallowEqual
+	shallowEqual, sign, first
 } from "./index";
+import { mouse, touches } from "d3-selection";
 
 export function getChartOrigin(origin, contextWidth, contextHeight) {
 	const originCoordinates = typeof origin === "function"
@@ -169,6 +170,24 @@ function yDomainFromYExtents(yExtents, yScale, plotData) {
 		: set(allYValues).values();
 
 	return realYDomain;
+}
+
+export function applyZoomToY(startPosition, diff, axisZoomCallback) {
+	const { startScale } = startPosition;
+
+	const center = mean(startScale.range());
+
+	const tempRange = startScale.range()
+		.map(d => d - sign(d - center) * diff);
+
+	// .map(d => inverted ? d - sign(d - center) * diff : d + sign(d - center) * diff);
+
+	const newDomain = tempRange.map(startScale.invert);
+
+	if (sign(last(startScale.range()) - first(startScale.range())) === sign(last(tempRange) - first(tempRange))) {
+		// console.log(startXScale.domain(), newXDomain)
+		axisZoomCallback(newDomain);
+	}
 }
 
 
